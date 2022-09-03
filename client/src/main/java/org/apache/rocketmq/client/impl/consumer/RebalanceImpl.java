@@ -236,6 +236,7 @@ public abstract class RebalanceImpl {
         return subscriptionInner;
     }
 
+    // 重平衡topic
     private void rebalanceByTopic(final String topic, final boolean isOrder) {
         switch (messageModel) {
             case BROADCASTING: {

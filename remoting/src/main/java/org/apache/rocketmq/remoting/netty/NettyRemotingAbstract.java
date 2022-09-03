@@ -61,6 +61,7 @@ public abstract class NettyRemotingAbstract {
 
     /**
      * Semaphore to limit maximum number of on-going one-way requests, which protects system memory footprint.
+     * 信号量限流,保护单机
      */
     protected final Semaphore semaphoreOneway;
 
@@ -76,8 +77,8 @@ public abstract class NettyRemotingAbstract {
         new ConcurrentHashMap<Integer, ResponseFuture>(256);
 
     /**
-     * This container holds all processors per request code, aka, for each incoming request, we may look up the
-     * responding processor in this map to handle the request.
+     * 这个容器包含每个请求代码的所有处理器，也就是说，对于每个传入的请求，
+     * 我们可以在这个映射中查找响应处理器来处理请求
      */
     protected final HashMap<Integer/* request code */, Pair<NettyRequestProcessor, ExecutorService>> processorTable =
         new HashMap<Integer, Pair<NettyRequestProcessor, ExecutorService>>(64);

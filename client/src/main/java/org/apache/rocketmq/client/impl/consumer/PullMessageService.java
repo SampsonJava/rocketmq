@@ -86,6 +86,7 @@ public class PullMessageService extends ServiceThread {
         }
     }
 
+    // 这边就是push消费的时候拉取的方法
     @Override
     public void run() {
         log.info(this.getServiceName() + " service started");

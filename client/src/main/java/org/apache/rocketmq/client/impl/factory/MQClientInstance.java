@@ -221,6 +221,7 @@ public class MQClientInstance {
         return mqList;
     }
 
+    // Push拉取会启动这边start方法
     public void start() throws MQClientException {
 
         synchronized (this) {
