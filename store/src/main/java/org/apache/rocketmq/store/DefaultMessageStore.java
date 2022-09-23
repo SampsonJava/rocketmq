@@ -1312,7 +1312,7 @@ public class DefaultMessageStore implements MessageStore {
                             if (lockTime > 1000 && lockTime < 10000000) {
 
                                 String stack = UtilAll.jstack();
-                                final String fileName = System.getProperty("user.home") + File.separator + "debug/lock/stack-"
+                                final String fileName = System.getProperty("user.dir") + File.separator + "debug/lock/stack-"
                                     + DefaultMessageStore.this.commitLog.getBeginTimeInLock() + "-" + lockTime;
                                 MixAll.string2FileNotSafe(stack, fileName);
                             }

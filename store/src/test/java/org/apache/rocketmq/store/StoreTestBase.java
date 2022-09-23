@@ -145,7 +145,7 @@ public class StoreTestBase {
     }
 
     public static String createBaseDir() {
-        String baseDir = System.getProperty("user.home") + File.separator + "unitteststore" + File.separator + UUID.randomUUID();
+        String baseDir = System.getProperty("user.dir") + File.separator + "unitteststore" + File.separator + UUID.randomUUID();
         final File file = new File(baseDir);
         if (file.exists()) {
             System.exit(1);

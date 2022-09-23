@@ -34,7 +34,7 @@ public class BasicLoggerTest {
 
     protected LoggingEvent loggingEvent;
 
-    protected String loggingDir = System.getProperty("user.home") + "/logs/rocketmq-test";
+    protected String loggingDir = System.getProperty("user.dir") + "/logs/rocketmq-test";
 
     @Before
     public void createLoggingEvent() {

@@ -93,7 +93,7 @@ public class IntegrationTestBase {
     }
 
     public static String createBaseDir() {
-        String baseDir = System.getProperty("user.home") + SEP + "unitteststore-" + UUID.randomUUID();
+        String baseDir = System.getProperty("user.dir") + SEP + "unitteststore-" + UUID.randomUUID();
         final File file = new File(baseDir);
         if (file.exists()) {
             logger.info(String.format("[%s] has already existed, please back up and remove it for integration tests", baseDir));

@@ -108,6 +108,8 @@ public class BrokerStartup {
             }
 
             final BrokerConfig brokerConfig = new BrokerConfig();
+            // TODO 本地调试使用, 如果打jar运行, 可以去掉此类注释, 可以全局搜索127.0.0.1
+            brokerConfig.setNamesrvAddr("127.0.0.1:9876");
             final NettyServerConfig nettyServerConfig = new NettyServerConfig();
             final NettyClientConfig nettyClientConfig = new NettyClientConfig();
 

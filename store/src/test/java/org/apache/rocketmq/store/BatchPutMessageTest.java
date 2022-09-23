@@ -63,7 +63,7 @@ public class BatchPutMessageTest {
         messageStore.shutdown();
         messageStore.destroy();
 
-        UtilAll.deleteFile(new File(System.getProperty("user.home") + File.separator + "putmessagesteststore"));
+        UtilAll.deleteFile(new File(System.getProperty("user.dir") + File.separator + "putmessagesteststore"));
     }
 
     private MessageStore buildMessageStore() throws Exception {
@@ -74,8 +74,8 @@ public class BatchPutMessageTest {
         messageStoreConfig.setMaxIndexNum(100 * 10);
         messageStoreConfig.setFlushDiskType(FlushDiskType.SYNC_FLUSH);
         messageStoreConfig.setFlushIntervalConsumeQueue(1);
-        messageStoreConfig.setStorePathRootDir(System.getProperty("user.home") + File.separator + "putmessagesteststore");
-        messageStoreConfig.setStorePathCommitLog(System.getProperty("user.home") + File.separator + "putmessagesteststore" + File.separator + "commitlog");
+        messageStoreConfig.setStorePathRootDir(System.getProperty("user.dir") + File.separator + "putmessagesteststore");
+        messageStoreConfig.setStorePathCommitLog(System.getProperty("user.dir") + File.separator + "putmessagesteststore" + File.separator + "commitlog");
         return new DefaultMessageStore(messageStoreConfig, new BrokerStatsManager("simpleTest"), new MyMessageArrivingListener(), new BrokerConfig());
     }
 

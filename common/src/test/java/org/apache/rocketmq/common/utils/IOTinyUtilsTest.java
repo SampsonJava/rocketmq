@@ -32,7 +32,7 @@ import java.util.List;
 
 public class IOTinyUtilsTest {
 
-    private String testRootDir = System.getProperty("user.home") + File.separator + "iotinyutilstest";
+    private String testRootDir = System.getProperty("user.dir") + File.separator + "iotinyutilstest";
 
     @Before
     public void init() {

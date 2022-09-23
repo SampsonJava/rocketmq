@@ -59,7 +59,7 @@ public class ScheduleMessageServiceTest {
      */
     int delayLevel = 2;
 
-    private static final String storePath = System.getProperty("user.home") + File.separator + "schedule_test#" + UUID.randomUUID();
+    private static final String storePath = System.getProperty("user.dir") + File.separator + "schedule_test#" + UUID.randomUUID();
     private static final int commitLogFileSize = 1024;
     private static final int cqFileSize = 10;
     private static final int cqExtFileSize = 10 * (ConsumeQueueExt.CqExtUnit.MIN_EXT_UNIT_SIZE + 64);
