@@ -127,10 +127,14 @@ public class DefaultMQProducerImpl implements MQProducerInner {
 
     public DefaultMQProducerImpl(final DefaultMQProducer defaultMQProducer, RPCHook rpcHook) {
         this.defaultMQProducer = defaultMQProducer;
+        // rpc 钩子
         this.rpcHook = rpcHook;
 
+        // 异步发送者线程池队列
         this.asyncSenderThreadPoolQueue = new LinkedBlockingQueue<Runnable>(50000);
+        // 默认异步发送线程池
         this.defaultAsyncSenderExecutor = new ThreadPoolExecutor(
+                // cpu核数
             Runtime.getRuntime().availableProcessors(),
             Runtime.getRuntime().availableProcessors(),
             1000 * 60,
@@ -195,6 +199,7 @@ public class DefaultMQProducerImpl implements MQProducerInner {
                 this.checkConfig();
 
                 if (!this.defaultMQProducer.getProducerGroup().equals(MixAll.CLIENT_INNER_PRODUCER_GROUP)) {
+                    // 实例名称设置为默认
                     this.defaultMQProducer.changeInstanceNameToPID();
                 }
 

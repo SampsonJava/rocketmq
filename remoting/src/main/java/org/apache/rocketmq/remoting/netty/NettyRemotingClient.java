@@ -189,6 +189,7 @@ public class NettyRemotingClient extends NettyRemotingAbstract implements Remoti
                 }
             });
 
+        // 扫描相应表
         this.timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {

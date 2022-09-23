@@ -96,6 +96,7 @@ public class ClientConfig {
 
     public void changeInstanceNameToPID() {
         if (this.instanceName.equals("DEFAULT")) {
+            // 实例名称默认为 进程ID + 纳秒
             this.instanceName = UtilAll.getPid() + "#" + System.nanoTime();
         }
     }
