@@ -169,10 +169,12 @@ public class RemotingCommand {
     private static RemotingCommand headerDecode(byte[] headerData, SerializeType type) {
         switch (type) {
             case JSON:
+                // fastjson序列化
                 RemotingCommand resultJson = RemotingSerializable.decode(headerData, RemotingCommand.class);
                 resultJson.setSerializeTypeCurrentRPC(type);
                 return resultJson;
             case ROCKETMQ:
+                // rocketmq序列化
                 RemotingCommand resultRMQ = RocketMQSerializable.rocketMQProtocolDecode(headerData);
                 resultRMQ.setSerializeTypeCurrentRPC(type);
                 return resultRMQ;
