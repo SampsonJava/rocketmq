@@ -621,6 +621,7 @@ public class MQClientInstance {
                             }
                         }
                     } else {
+                        // 获取topic的信息, 例如存储在哪几个broker等等
                         topicRouteData = this.mQClientAPIImpl.getTopicRouteInfoFromNameServer(topic, clientConfig.getMqClientApiTimeout());
                     }
                     if (topicRouteData != null) {

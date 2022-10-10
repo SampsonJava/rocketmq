@@ -854,10 +854,12 @@ public class BrokerController {
         }
 
         if (this.remotingServer != null) {
+            // 普通netty server
             this.remotingServer.start();
         }
 
         if (this.fastRemotingServer != null) {
+            // vip通道的netty server
             this.fastRemotingServer.start();
         }
 
@@ -866,6 +868,7 @@ public class BrokerController {
         }
 
         if (this.brokerOuterAPI != null) {
+            // 启动broker client
             this.brokerOuterAPI.start();
         }
 
@@ -884,6 +887,7 @@ public class BrokerController {
         if (!messageStoreConfig.isEnableDLegerCommitLog()) {
             startProcessorByHa(messageStoreConfig.getBrokerRole());
             handleSlaveSynchronize(messageStoreConfig.getBrokerRole());
+            // 注册broker到Nameserver, 找这里启动了NettyClient
             this.registerBrokerAll(true, false, true);
         }
 

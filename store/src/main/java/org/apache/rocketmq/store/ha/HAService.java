@@ -107,6 +107,7 @@ public class HAService {
     // }
 
     public void start() throws Exception {
+        // 开始监听slave连接
         this.acceptSocketService.beginAccept();
         this.acceptSocketService.start();
         this.groupTransferService.start();
