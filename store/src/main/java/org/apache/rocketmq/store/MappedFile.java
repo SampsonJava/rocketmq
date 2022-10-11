@@ -280,7 +280,9 @@ public class MappedFile extends ReferenceResource {
                 int value = getReadPosition();
 
                 try {
-                    //We only append data to fileChannel or mappedByteBuffer, never both.
+                    // We only append data to fileChannel or mappedByteBuffer, never both.
+                    // 我们只将数据附加到 fileChannel 或 mappedByteBuffer，而不是两者。
+                    // 使用mmap或者filechannel
                     if (writeBuffer != null || this.fileChannel.position() != 0) {
                         this.fileChannel.force(false);
                     } else {
@@ -314,7 +316,7 @@ public class MappedFile extends ReferenceResource {
             }
         }
 
-        // All dirty data has been committed to FileChannel.
+        // All dirty data has been committed to FileChannel.  所有脏数据已经提交到了 FileChannel
         if (writeBuffer != null && this.transientStorePool != null && this.fileSize == this.committedPosition.get()) {
             this.transientStorePool.returnBuffer(writeBuffer);
             this.writeBuffer = null;

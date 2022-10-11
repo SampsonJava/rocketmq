@@ -483,7 +483,7 @@ public class NettyRemotingClient extends NettyRemotingAbstract implements Remoti
 
                 if (createNewConnection) {
                     ChannelFuture channelFuture = this.bootstrap.connect(RemotingHelper.string2SocketAddress(addr));
-                    System.out.printf("NettyClient连接成功, addr:%s%n", addr);
+                    System.out.printf("NettyClient 连接成功, addr:%s%n", addr);
                     log.info("createChannel: begin to connect remote host[{}] asynchronously", addr);
                     cw = new ChannelWrapper(channelFuture);
                     this.channelTables.put(addr, cw);
