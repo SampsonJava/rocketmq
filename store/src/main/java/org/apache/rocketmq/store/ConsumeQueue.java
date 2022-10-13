@@ -489,9 +489,12 @@ public class ConsumeQueue {
     }
 
     public SelectMappedBufferResult getIndexBuffer(final long startIndex) {
+        // 映射文件大小
         int mappedFileSize = this.mappedFileSize;
         long offset = startIndex * CQ_STORE_UNIT_SIZE;
+        // 判断offset是否大于最小逻辑offset, ps:不知道最小逻辑offset啥意思
         if (offset >= this.getMinLogicOffset()) {
+            // 按照offset查找映射文件(映射文件是通过mmap或者fileChannel映射)
             MappedFile mappedFile = this.mappedFileQueue.findMappedFileByOffset(offset);
             if (mappedFile != null) {
                 SelectMappedBufferResult result = mappedFile.selectMappedBuffer((int) (offset % mappedFileSize));

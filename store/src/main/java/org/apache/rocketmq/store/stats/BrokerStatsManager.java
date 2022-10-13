@@ -243,6 +243,7 @@ public class BrokerStatsManager {
     public void recordDiskFallBehindSize(final String group, final String topic, final int queueId,
         final long fallBehind) {
         final String statsKey = String.format("%d@%s@%s", queueId, topic, group);
+        // 统计什么东西, 不太清楚, 统计落后记录?
         this.momentStatsItemSetFallSize.getAndCreateStatsItem(statsKey).getValue().set(fallBehind);
     }
 

@@ -470,7 +470,7 @@ public class MappedFileQueue {
      * Finds a mapped file by offset.
      *
      * @param offset Offset.
-     * @param returnFirstOnNotFound If the mapped file is not found, then return the first one.
+     * @param returnFirstOnNotFound If the mapped file is not found, then return the first one.如果未找到映射文件，则返回第一个。
      * @return Mapped file or null (when not found and returnFirstOnNotFound is <code>false</code>).
      */
     public MappedFile findMappedFileByOffset(final long offset, final boolean returnFirstOnNotFound) {
