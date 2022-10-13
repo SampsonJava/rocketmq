@@ -628,6 +628,7 @@ public class NettyRemotingClient extends NettyRemotingAbstract implements Remoti
         @Override
         protected void channelRead0(ChannelHandlerContext ctx, RemotingCommand msg) throws Exception {
             // Nameserver和Broker的所有channelRead事件
+            // Consumer消费消息也在这个地方
             processMessageReceived(ctx, msg);
         }
     }

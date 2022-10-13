@@ -158,6 +158,7 @@ public abstract class NettyRemotingAbstract {
                 case REQUEST_COMMAND:
                     processRequestCommand(ctx, cmd);
                     break;
+                // 一般进入这都是消费者消费消息
                 case RESPONSE_COMMAND:
                     processResponseCommand(ctx, cmd);
                     break;
@@ -284,7 +285,7 @@ public abstract class NettyRemotingAbstract {
 
     /**
      * Process response from remote peer to the previous issued requests.
-     *
+     *  处理broker发送回来的响应
      * @param ctx channel handler context.
      * @param cmd response command instance.
      */
@@ -310,6 +311,7 @@ public abstract class NettyRemotingAbstract {
 
     /**
      * Execute callback in callback executor. If callback executor is null, run directly in current thread
+     * 找回调线程池执行回调,如果回调线程池是空, 直接在当前线程运行
      */
     private void executeInvokeCallback(final ResponseFuture responseFuture) {
         boolean runInThisThread = false;

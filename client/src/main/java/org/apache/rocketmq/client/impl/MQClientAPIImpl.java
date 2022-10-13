@@ -526,6 +526,7 @@ public class MQClientAPIImpl {
         this.remotingClient.invokeAsync(addr, request, timeoutMillis, new InvokeCallback() {
             @Override
             public void operationComplete(ResponseFuture responseFuture) {
+                // 耗时计算
                 long cost = System.currentTimeMillis() - beginStartTime;
                 RemotingCommand response = responseFuture.getResponseCommand();
                 if (null == sendCallback && response != null) {
@@ -534,6 +535,7 @@ public class MQClientAPIImpl {
                         SendResult sendResult = MQClientAPIImpl.this.processSendResponse(brokerName, msg, response, addr);
                         if (context != null && sendResult != null) {
                             context.setSendResult(sendResult);
+                            // 执行钩子函数
                             context.getProducer().executeSendMessageHookAfter(context);
                         }
                     } catch (Throwable e) {
@@ -649,18 +651,22 @@ public class MQClientAPIImpl {
     ) throws MQBrokerException, RemotingCommandException {
         SendStatus sendStatus;
         switch (response.getCode()) {
+            // 刷盘超时
             case ResponseCode.FLUSH_DISK_TIMEOUT: {
                 sendStatus = SendStatus.FLUSH_DISK_TIMEOUT;
                 break;
             }
+            // 刷slave节点超时
             case ResponseCode.FLUSH_SLAVE_TIMEOUT: {
                 sendStatus = SendStatus.FLUSH_SLAVE_TIMEOUT;
                 break;
             }
+            // slave不可用
             case ResponseCode.SLAVE_NOT_AVAILABLE: {
                 sendStatus = SendStatus.SLAVE_NOT_AVAILABLE;
                 break;
             }
+            // 成功
             case ResponseCode.SUCCESS: {
                 sendStatus = SendStatus.SEND_OK;
                 break;
@@ -674,6 +680,7 @@ public class MQClientAPIImpl {
                 (SendMessageResponseHeader) response.decodeCommandCustomHeader(SendMessageResponseHeader.class);
 
         //If namespace not null , reset Topic without namespace.
+        // 如果命名空间不为空, 重置没有命名空间的topic, ps:不知道要干嘛, 不知道啥意思
         String topic = msg.getTopic();
         if (StringUtils.isNotEmpty(this.clientConfig.getNamespace())) {
             topic = NamespaceUtil.withoutNamespace(topic, this.clientConfig.getNamespace());
@@ -681,7 +688,9 @@ public class MQClientAPIImpl {
 
         MessageQueue messageQueue = new MessageQueue(topic, brokerName, responseHeader.getQueueId());
 
+        // 获取唯一id
         String uniqMsgId = MessageClientIDSetter.getUniqID(msg);
+        // 如果是批量, 那么把多个消息的唯一id组装成一条唯一id
         if (msg instanceof MessageBatch) {
             StringBuilder sb = new StringBuilder();
             for (Message message : (MessageBatch) msg) {
@@ -692,8 +701,11 @@ public class MQClientAPIImpl {
         SendResult sendResult = new SendResult(sendStatus,
                 uniqMsgId,
                 responseHeader.getMsgId(), messageQueue, responseHeader.getQueueOffset());
+        // 事务id, ps:好像是吧, 不太确定
         sendResult.setTransactionId(responseHeader.getTransactionId());
+        // 区域id
         String regionId = response.getExtFields().get(MessageConst.PROPERTY_MSG_REGION);
+        // 追踪开启
         String traceOn = response.getExtFields().get(MessageConst.PROPERTY_TRACE_SWITCH);
         if (regionId == null || regionId.isEmpty()) {
             regionId = MixAll.DEFAULT_TRACE_REGION_ID;
@@ -733,12 +745,22 @@ public class MQClientAPIImpl {
         return null;
     }
 
+    /**
+     * 异步拉取消息
+     * @param addr
+     * @param request
+     * @param timeoutMillis
+     * @param pullCallback
+     * @throws RemotingException
+     * @throws InterruptedException
+     */
     private void pullMessageAsync(
         final String addr,
         final RemotingCommand request,
         final long timeoutMillis,
         final PullCallback pullCallback
     ) throws RemotingException, InterruptedException {
+        // TODO 这边可以看看是怎么玩的, 这个InvokeCallback怎么就传过去调这边了
         this.remotingClient.invokeAsync(addr, request, timeoutMillis, new InvokeCallback() {
             @Override
             public void operationComplete(ResponseFuture responseFuture) {

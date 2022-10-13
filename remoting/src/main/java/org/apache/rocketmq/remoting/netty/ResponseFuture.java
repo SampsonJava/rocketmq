@@ -50,7 +50,11 @@ public class ResponseFuture {
 
     public void executeInvokeCallback() {
         if (invokeCallback != null) {
+            // 只执行一次回调
             if (this.executeCallbackOnlyOnce.compareAndSet(false, true)) {
+                /**
+                 * 如果是消费消息的话, 实现类是{@link org.apache.rocketmq.client.impl.MQClientAPIImpl}
+                 */
                 invokeCallback.operationComplete(this);
             }
         }

@@ -33,12 +33,12 @@ public class Consumer {
     public static void main(String[] args) throws InterruptedException, MQClientException {
 
         /*
-         * Instantiate with specified consumer group name.
+         * Instantiate with specified consumer group name.使用指定的消费者组名称进行实例化
          */
         DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("please_rename_unique_group_name_4");
 
         /*
-         * Specify name server addresses.
+         * Specify name server addresses. 指定Nameserver地址
          * <p/>
          *
          * Alternatively, you may specify name server addresses via exporting environmental variable: NAMESRV_ADDR
@@ -62,6 +62,9 @@ public class Consumer {
 
         /*
          *  Register callback to execute on arrival of messages fetched from brokers.
+         *  这种就是push模式
+         *  push方式里，consumer把轮询过程封装了，并注册MessageListener监听器，取到消息后，唤醒MessageListener的consumeMessage()来消费，对用户而言，感觉消息是被推送过来的。
+         *  pull方式里，取消息的过程需要用户自己写，首先通过打算消费的Topic拿到MessageQueue的集合，遍历MessageQueue集合，然后针对每个MessageQueue批量取消息，一次取完后，记录该队列下一次要取的开始offset，直到取完了，再换另一个MessageQueue
          */
         consumer.registerMessageListener(new MessageListenerConcurrently() {
 

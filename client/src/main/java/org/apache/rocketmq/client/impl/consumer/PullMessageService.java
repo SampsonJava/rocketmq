@@ -86,7 +86,8 @@ public class PullMessageService extends ServiceThread {
         }
     }
 
-    // 这边就是push消费的时候拉取的方法
+    // 消费者定时拉取方法
+    // 发消息也会启动这个, 不太理解为什么发消息要启动这个线程
     @Override
     public void run() {
         log.info(this.getServiceName() + " service started");
