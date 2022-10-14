@@ -159,7 +159,9 @@ public class StatsItemSet {
     }
 
     public void addRTValue(final String statsKey, final int incValue, final int incTimes) {
+        // 获取并且创建统计项
         StatsItem statsItem = this.getAndCreateRTStatsItem(statsKey);
+        // 增加耗时
         statsItem.getValue().add(incValue);
         statsItem.getTimes().add(incTimes);
     }
@@ -213,8 +215,10 @@ public class StatsItemSet {
         StatsItem statsItem = this.statsItemTable.get(statsKey);
         if (null == statsItem) {
             if (rtItem) {
+                // 耗时统计项目
                 statsItem = new RTStatsItem(this.statsName, statsKey, this.scheduledExecutorService, this.log);
             } else {
+                // 统计项目
                 statsItem = new StatsItem(this.statsName, statsKey, this.scheduledExecutorService, this.log);
             }
             StatsItem prev = this.statsItemTable.putIfAbsent(statsKey, statsItem);

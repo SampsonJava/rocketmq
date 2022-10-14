@@ -262,7 +262,7 @@ public class PullMessageProcessor extends AsyncNettyRequestProcessor implements 
                 this.brokerController.getConsumerFilterManager());
         }
 
-        // 根据消费组, topic, consumerQueueId, offset, 最大消息数, 和消息过滤器去查询消息
+        // 根据消费组, topic, consumerQueueId, offset, 最大消息数, 和消息过滤器去查询消息 TODO:有空可以详细看看
         final GetMessageResult getMessageResult =
             this.brokerController.getMessageStore().getMessage(requestHeader.getConsumerGroup(), requestHeader.getTopic(),
                 requestHeader.getQueueId(), requestHeader.getQueueOffset(), requestHeader.getMaxMsgNums(), messageFilter);
@@ -426,7 +426,7 @@ public class PullMessageProcessor extends AsyncNettyRequestProcessor implements 
 
                     // 增加broker获取次数
                     this.brokerController.getBrokerStatsManager().incBrokerGetNums(getMessageResult.getMessageCount());
-                    // 是否通过堆传输消息
+                    // 是否通过堆传输消息 TODO:好像走这里了, 不知道为什么
                     if (this.brokerController.getBrokerConfig().isTransferMsgByHeap()) {
                         final long beginTimeMills = this.brokerController.getMessageStore().now();
                         final byte[] r = this.readGetMessageResult(getMessageResult, requestHeader.getConsumerGroup(), requestHeader.getTopic(), requestHeader.getQueueId());
