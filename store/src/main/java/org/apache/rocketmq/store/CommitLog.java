@@ -474,7 +474,7 @@ public class CommitLog {
                 int size = dispatchRequest.getMsgSize();
 
                 if (dispatchRequest.isSuccess()) {
-                    // Normal data
+                    // 正常数据
                     if (size > 0) {
                         mappedFileOffset += size;
 
@@ -487,13 +487,15 @@ public class CommitLog {
                         }
                     }
                     // Come the end of the file, switch to the next file
+                    // 文件结束, 切换到下一个文件
                     // Since the return 0 representatives met last hole, this can
+                    // 由于返回0代表遇到了最后一个洞，这个不能包含在truncate offset中
                     // not be included in truncate offset
                     else if (size == 0) {
                         index++;
                         if (index >= mappedFiles.size()) {
-                            // The current branch under normal circumstances should
-                            // not happen
+                            // The current branch under normal circumstances should not happen
+                            // 当前分支正常情况下应该不会发生
                             log.info("recover physics file over, last mapped file " + mappedFile.getFileName());
                             break;
                         } else {
@@ -516,12 +518,14 @@ public class CommitLog {
             this.mappedFileQueue.truncateDirtyFiles(processOffset);
 
             // Clear ConsumeQueue redundant data
+            // 清除ConsumerQueue冗余数据
             if (maxPhyOffsetOfConsumeQueue >= processOffset) {
                 log.warn("maxPhyOffsetOfConsumeQueue({}) >= processOffset({}), truncate dirty logic files", maxPhyOffsetOfConsumeQueue, processOffset);
                 this.defaultMessageStore.truncateDirtyLogicFiles(processOffset);
             }
         }
         // Commitlog case files are deleted
+        // Commitlog case 文件被删除
         else {
             log.warn("The commitlog files are deleted, and delete the consume queue files");
             this.mappedFileQueue.setFlushedWhere(0);
@@ -586,14 +590,18 @@ public class CommitLog {
         return keyBuilder.toString();
     }
 
-    // 消息写磁盘
+    /**
+     * 消息写磁盘 TODO 可以好好看看怎么写怎么刷的, 异步线程刷盘 {@link org.apache.rocketmq.store.CommitLog.FlushRealTimeService}
+     * @param msg
+     * @return
+     */
     public CompletableFuture<PutMessageResult> asyncPutMessage(final MessageExtBrokerInner msg) {
         // 设置存储时间
         msg.setStoreTimestamp(System.currentTimeMillis());
         // Set the message body BODY CRC (consider the most appropriate setting
         // on the client)
         msg.setBodyCRC(UtilAll.crc32(msg.getBody()));
-        // Back to Results
+        // 返回结果
         AppendMessageResult result = null;
 
         StoreStatsService storeStatsService = this.defaultMessageStore.getStoreStatsService();
@@ -605,6 +613,7 @@ public class CommitLog {
         if (tranType == MessageSysFlag.TRANSACTION_NOT_TYPE
                 || tranType == MessageSysFlag.TRANSACTION_COMMIT_TYPE) {
             // Delay Delivery
+            // 延迟投递
             if (msg.getDelayTimeLevel() > 0) {
                 if (msg.getDelayTimeLevel() > this.defaultMessageStore.getScheduleMessageService().getMaxDelayLevel()) {
                     msg.setDelayTimeLevel(this.defaultMessageStore.getScheduleMessageService().getMaxDelayLevel());
@@ -613,7 +622,8 @@ public class CommitLog {
                 topic = TopicValidator.RMQ_SYS_SCHEDULE_TOPIC;
                 queueId = ScheduleMessageService.delayLevel2QueueId(msg.getDelayTimeLevel());
 
-                // Backup real topic, queueId 备份真实topic, queueId
+                // Backup real topic, queueId
+                // 备份真实topic, queueId
                 MessageAccessor.putProperty(msg, MessageConst.PROPERTY_REAL_TOPIC, msg.getTopic());
                 MessageAccessor.putProperty(msg, MessageConst.PROPERTY_REAL_QUEUE_ID, String.valueOf(msg.getQueueId()));
                 msg.setPropertiesString(MessageDecoder.messageProperties2String(msg.getProperties()));
@@ -634,7 +644,7 @@ public class CommitLog {
         }
 
         PutMessageThreadLocal putMessageThreadLocal = this.putMessageThreadLocal.get();
-        PutMessageResult encodeResult = putMessageThreadLocal.getEncoder().encode(msg);
+        PutMessageResult encodeResult = putMessageThreadLocal.getEncoder().encode(msg); //编码
         if (encodeResult != null) {
             return CompletableFuture.completedFuture(encodeResult);
         }
@@ -644,7 +654,9 @@ public class CommitLog {
         long elapsedTimeInLock = 0;
         MappedFile unlockMappedFile = null;
 
-        putMessageLock.lock(); //spin or ReentrantLock ,depending on store config  自旋还是lock锁, 取决于存储配置
+        //spin or ReentrantLock ,depending on store config
+        // 自旋还是lock锁, 取决于存储配置
+        putMessageLock.lock();
         try {
             // 获取最后一个MappedFile
             MappedFile mappedFile = this.mappedFileQueue.getLastMappedFile();
@@ -653,8 +665,8 @@ public class CommitLog {
             // 开始时间
             this.beginTimeInLock = beginLockTimestamp;
 
-            // Here settings are stored timestamp, in order to ensure an orderly  这里设置存储时间, 以保证有序
-            // global
+            // Here settings are stored timestamp, in order to ensure an orderly global
+            // 这里设置存储时间, 以保证全局有序
             msg.setStoreTimestamp(beginLockTimestamp);
 
             if (null == mappedFile || mappedFile.isFull()) {
@@ -673,9 +685,11 @@ public class CommitLog {
                 case END_OF_FILE:
                     unlockMappedFile = mappedFile;
                     // Create a new file, re-write the message
+                    // 创建一个新文件，重新写这个message
                     mappedFile = this.mappedFileQueue.getLastMappedFile(0);
                     if (null == mappedFile) {
                         // XXX: warn and notify me
+                        // XXX: 警告并通知我
                         log.error("create mapped file2 error, topic: " + msg.getTopic() + " clientAddr: " + msg.getBornHostString());
                         beginTimeInLock = 0;
                         return CompletableFuture.completedFuture(new PutMessageResult(PutMessageStatus.CREATE_MAPEDFILE_FAILED, result));
@@ -710,7 +724,7 @@ public class CommitLog {
 
         PutMessageResult putMessageResult = new PutMessageResult(PutMessageStatus.PUT_OK, result);
 
-        // Statistics
+        // 统计
         storeStatsService.getSinglePutMessageTopicTimesTotal(msg.getTopic()).add(1);
         storeStatsService.getSinglePutMessageTopicSizeTotal(topic).add(result.getWroteBytes());
 
@@ -772,8 +786,8 @@ public class CommitLog {
             long beginLockTimestamp = this.defaultMessageStore.getSystemClock().now();
             this.beginTimeInLock = beginLockTimestamp;
 
-            // Here settings are stored timestamp, in order to ensure an orderly
-            // global
+            // Here settings are stored timestamp, in order to ensure an orderly global
+            // 这里设置保存时间戳，以保证全局有序
             messageExtBatch.setStoreTimestamp(beginLockTimestamp);
 
             if (null == mappedFile || mappedFile.isFull()) {
